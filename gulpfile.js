@@ -18,7 +18,8 @@ gulp.task('clean', function () {
 
 gulp.task('copy:libs', ['clean'], function() {
   return gulp.src([
-      'node_modules/expect/umd/expect.js'
+      'node_modules/expect/umd/expect.js',
+      'node_modules/redux/dist/redux.js'
     ])
     .pipe(gulp.dest('dist/lib'))
 }); 
