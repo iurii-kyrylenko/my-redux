@@ -19,6 +19,7 @@ gulp.task('clean', function () {
 gulp.task('copy:libs', ['clean'], function() {
   return gulp.src([
       'node_modules/expect/umd/expect.js',
+      'lib/deep-freeze.js',
       'node_modules/redux/dist/redux.js',
       'node_modules/react/dist/react.js',
       'node_modules/react-dom/dist/react-dom.js'

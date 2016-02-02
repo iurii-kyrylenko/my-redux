@@ -1,40 +1,44 @@
-function counter(state = 0, action) {
-    switch (action.type) {
-        case 'INCREMENT':
-            return state + 1;
-        case 'DECREMENT':
-            return state - 1;
-        default:
-            return state;
+function CounterApp() {
+
+    const counter = (state = 0, action) => {
+        switch (action.type) {
+            case 'INCREMENT':
+                return state + 1;
+            case 'DECREMENT':
+                return state - 1;
+            default:
+                return state;
+        }
     }
-}
 
-const Counter = ({
-    value,
-    onIncrement,
-    onDecrement
-}) => (
-    <div>
-        <h1>{value}</h1>
-        <button onClick={onIncrement}>+</button>
-        <button onClick={onDecrement}>-</button>
-    </div>
-);
-
-const { createStore } = Redux;
-const store = createStore(counter);
-
-const render = () => {
-    ReactDOM.render(
-        <Counter
-            value={store.getState()}
-            onIncrement={() => store.dispatch({type: 'INCREMENT'})}
-            onDecrement={() => store.dispatch({type: 'DECREMENT'})}>
-        </Counter>,
-        document.getElementById('root')
+    const Counter = ({
+        value,
+        onIncrement,
+        onDecrement
+    }) => (
+        <div>
+            <h1>{value}</h1>
+            <button onClick={onIncrement}>+</button>
+            <button onClick={onDecrement}>-</button>
+        </div>
     );
-};
 
-render();
+    const { createStore } = Redux;
+    const store = createStore(counter);
 
-store.subscribe(render);
+    const render = () => {
+        ReactDOM.render(
+            <Counter
+                value={store.getState()}
+                onIncrement={() => store.dispatch({type: 'INCREMENT'})}
+                onDecrement={() => store.dispatch({type: 'DECREMENT'})}>
+            </Counter>,
+            document.getElementById('root')
+        );
+    };
+
+    render();
+
+    store.subscribe(render);
+
+}
