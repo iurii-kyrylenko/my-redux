@@ -19,7 +19,9 @@ gulp.task('clean', function () {
 gulp.task('copy:libs', ['clean'], function() {
   return gulp.src([
       'node_modules/expect/umd/expect.js',
-      'node_modules/redux/dist/redux.js'
+      'node_modules/redux/dist/redux.js',
+      'node_modules/react/dist/react.js',
+      'node_modules/react-dom/dist/react-dom.js'
     ])
     .pipe(gulp.dest('dist/lib'))
 }); 
@@ -33,7 +35,7 @@ gulp.task('compile', ['clean'], () => {
     return gulp.src(paths.srcScripts)
         .pipe(sourcemaps.init())
         .pipe(babel({
-            presets: ['es2015']
+            presets: ['es2015', 'react']
         }))
         .pipe(concat(paths.distScript))
         .pipe(sourcemaps.write('.'))
