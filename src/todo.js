@@ -44,7 +44,32 @@ function TodoApp () {
         }
     };
 
-    const { combineReducers } = Redux;
+/**
+ *  Composition with Objects:
+ *  const todoApp = (state = {}, action) => {
+ *      return {
+ *          todos: todos(state.todos, action),
+ *          visibilityFilter: visibilityFilter(state.visibilityFilter, action)
+ *      };
+ *  };
+ */
+
+/**
+ *  Reducer Composition with Redux.combineReducers():
+ *  const { combineReducers } = Redux;
+ */
+
+/**
+ *  Implementing combineReducers() from Scratch:
+ */
+    const combineReducers = (reducers) => {
+        return (state = {}, action) => {
+            return Object.keys(reducers).reduce((accState, key) => {
+                 accState[key] = reducers[key](state[key], action);
+                 return accState;
+            }, {});
+        };
+    };
 
     const todoApp = combineReducers({
         todos,
