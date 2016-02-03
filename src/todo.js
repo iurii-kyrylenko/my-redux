@@ -35,60 +35,54 @@ function TodoApp () {
         }
     };
 
-    const testAddTodo = () => {
-        const action = {
-            type: 'ADD_TODO',
-            id: 0,
-            text: 'Learn Redux'
+    const visibilityFilter = (state = 'SHOW_ALL', action) => {
+        switch(action.type) {
+            case 'SET_VISIBILITY_FILTER':
+                return action.filter;
+            default:
+                return state;
+        }
+    };
+
+    const todoApp = (state = {}, action) => {
+        return {
+            todos: todos(state.todos, action),
+            visibilityFilter: visibilityFilter(state.visibilityFilter, action)
         };
-        const stateBefore = [];
-        const stateAfter = [{
-            id: 0,
-            text: 'Learn Redux',
-            completed: false
-        }];
+    };
 
-        deepFreeze(action);
-        deepFreeze(stateBefore);
+    const { createStore } = Redux;
+    const store = createStore(todoApp);
 
-        expect(
-            todos(stateBefore, action)
-        ).toEqual(stateAfter);
-    }
 
-    const testToggleTodo = () => {
-        const action = {
-            type: 'TOGGLE_TODO',
-            id: 1
-        };
-        const stateBefore = [{
-            id: 0,
-            text: 'Learn Redux',
-            completed: false
-        }, {
-            id: 1,
-            text: 'Watch Santa Barbara',
-            completed: false
-        }];
-        const stateAfter = [{
-            id: 0,
-            text: 'Learn Redux',
-            completed: false
-        }, {
-            id: 1,
-            text: 'Watch Santa Barbara',
-            completed: true
-        }];
+    const logState = () => {
+        console.log(JSON.stringify(store.getState(), null, 2));
+    };
 
-        deepFreeze(action);
-        deepFreeze(stateBefore);
+    store.subscribe(logState);
 
-        expect(
-            todos(stateBefore, action)
-        ).toEqual(stateAfter);
-    }
+    logState();
 
-    testAddTodo();
-    testToggleTodo();
-    console.log('All tests passed.');
+    store.dispatch({
+        type: 'ADD_TODO',
+        id: 0,
+        text: 'Learn Redux'
+    });
+
+    store.dispatch({
+        type: 'ADD_TODO',
+        id: 1,
+        text: 'Watch Santa Barbara'
+    });
+
+    store.dispatch({
+        type: 'TOGGLE_TODO',
+        id: 1
+    });
+
+    store.dispatch({
+        type: 'SET_VISIBILITY_FILTER',
+        filter: 'SHOW_COMPLETED'
+    });
+
 }
