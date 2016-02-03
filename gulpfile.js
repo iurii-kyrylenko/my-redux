@@ -36,7 +36,7 @@ gulp.task('compile', ['clean'], () => {
     return gulp.src(paths.srcScripts)
         .pipe(sourcemaps.init())
         .pipe(babel({
-            presets: ['es2015', 'react']
+            presets: ['es2015', 'react', 'stage-2']
         }))
         .pipe(concat(paths.distScript))
         .pipe(sourcemaps.write('.'))
@@ -44,3 +44,7 @@ gulp.task('compile', ['clean'], () => {
 });
 
 gulp.task('build', ['copy:assets', 'copy:libs', 'compile']);
+
+gulp.task('watch', function() {
+  gulp.watch(paths.srcFiles, ['build']);
+});
