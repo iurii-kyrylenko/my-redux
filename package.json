@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "description": "es-6-seed",
   "scripts": {
+    "gulp": "gulp",
     "clean": "gulp clean",
     "build": "gulp build",
-    "start": "gulp watch",
+    "start": "gulp build-then-watch",
     "serve": "node server.js"
   },
   "author": "Iurii Kyrylenko",

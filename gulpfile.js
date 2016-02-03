@@ -38,6 +38,10 @@ gulp.task('compile', ['clean'], () => {
         .pipe(babel({
             presets: ['es2015', 'react', 'stage-2']
         }))
+        .on('error', function(error){
+          console.log(error.toString());
+          this.emit('end');
+        })
         .pipe(concat(paths.distScript))
         .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest(paths.dist));
@@ -48,3 +52,6 @@ gulp.task('build', ['copy:assets', 'copy:libs', 'compile']);
 gulp.task('watch', function() {
   gulp.watch(paths.srcFiles, ['build']);
 });
+
+gulp.task('build-then-watch', ['build', 'watch']);
+
