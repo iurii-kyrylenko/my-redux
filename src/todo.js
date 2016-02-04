@@ -44,33 +44,7 @@ function TodoApp () {
         }
     };
 
-/**
- *  Composition with Objects:
- *  const todoApp = (state = {}, action) => {
- *      return {
- *          todos: todos(state.todos, action),
- *          visibilityFilter: visibilityFilter(state.visibilityFilter, action)
- *      };
- *  };
- */
-
-/**
- *  Reducer Composition with Redux.combineReducers():
- *  const { combineReducers } = Redux;
- */
-
-/**
- *  Implementing combineReducers() from Scratch:
- */
-    const combineReducers = (reducers) => {
-        return (state = {}, action) => {
-            return Object.keys(reducers).reduce((accState, key) => {
-                 accState[key] = reducers[key](state[key], action);
-                 return accState;
-            }, {});
-        };
-    };
-
+    const { combineReducers } = Redux;
     const todoApp = combineReducers({
         todos,
         visibilityFilter
@@ -79,34 +53,47 @@ function TodoApp () {
     const { createStore } = Redux;
     const store = createStore(todoApp);
 
-    const logState = () => {
-        console.log(JSON.stringify(store.getState(), null, 2));
+    const { Component } = React;
+    let nextTodId = 0;
+    class TodoApp extends Component {
+        render() {
+            return (
+                <div>
+                    <input ref= {node =>
+                        this.input = node
+                    } />
+                    <button onClick= {
+                        () => {
+                            store.dispatch({
+                                type: 'ADD_TODO',
+                                id: nextTodId++,
+                                text: this.input.value
+                            });
+                            this.input.value = '';
+                        }
+                    }>Add Todo
+                    </button>
+                    <ul>
+                        {this.props.todos.map(todo =>
+                            <li key={todo.id}>
+                                {todo.text}
+                            </li>
+                        )}
+                    </ul>
+                </div>
+            );
+        }
+    }
+
+    const render = () => {
+        ReactDOM.render(
+            <TodoApp todos={store.getState().todos}>
+            </TodoApp>,
+            document.getElementById('root')
+        );
     };
 
-    store.subscribe(logState);
-
-    logState();
-
-    store.dispatch({
-        type: 'ADD_TODO',
-        id: 0,
-        text: 'Learn Redux'
-    });
-
-    store.dispatch({
-        type: 'ADD_TODO',
-        id: 1,
-        text: 'Watch Santa Barbara'
-    });
-
-    store.dispatch({
-        type: 'TOGGLE_TODO',
-        id: 1
-    });
-
-    store.dispatch({
-        type: 'SET_VISIBILITY_FILTER',
-        filter: 'SHOW_COMPLETED'
-    });
+    store.subscribe(render);
+    render();
 
 }
