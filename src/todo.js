@@ -87,6 +87,26 @@ function TodoApp () {
         );
     };
 
+    const AddTodo = ({
+        onAddTodo
+    }) => {
+        let input;
+        return (
+            <div>
+                <input ref = {node => input = node} />
+                {' '}
+                <button
+                    onClick= {() => {
+                        const text = input.value.trim();
+                        if(text) onAddTodo(text);
+                        input.value = '';
+                    }}
+                >Add Todo
+                </button>
+            </div>
+        );
+    };
+
     const Todo = ({
         onClick,
         completed,
@@ -147,23 +167,15 @@ function TodoApp () {
                             children='Completed'>
                         </FilterLink>
                     </p>
-                    <input ref= {node =>
-                        this.input = node
-                    } />
-                    {' '}
-                    <button onClick= {
-                        () => {
-                            const todo = this.input.value.trim();
-                            this.input.value = '';
-                            if(!todo) return;
+                    <AddTodo
+                        onAddTodo={text =>
                             store.dispatch({
                                 type: 'ADD_TODO',
                                 id: nextTodId++,
-                                text: todo
-                            });
+                                text
+                            })
                         }
-                    }>Add Todo
-                    </button>
+                    ></AddTodo>
                     <TodoList
                         todos={visibleTodos}
                         onTodoClick={id =>
