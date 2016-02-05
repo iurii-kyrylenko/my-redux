@@ -64,13 +64,12 @@ function TodoApp () {
         }
     };
 
-    const FilterLink = ({
+    const Link = ({
         onClick,
-        filter,
-        currentFilter,
+        active,
         children
     }) => {
-        if(currentFilter === filter) {
+        if(active) {
             return <span>{children}</span>;
         }
 
@@ -78,39 +77,66 @@ function TodoApp () {
             <a href='#'
                 onClick={(e) => {
                     e.preventDefault();
-                    onClick(filter);
+                    onClick();
                 }}
-            >{children}
+            >
+                {children}
             </a>
         );
     };
 
-    const Header = ({
-        visibilityFilter,
-        onFilterClick
-    }) => (
+    const { Component } = React;
+    class FilterLink extends Component {
+        componentDidMount() {
+            this.unsubscribe = store.subscribe(() =>
+                this.forceUpdate()
+            );
+        }
+
+        componentWillUnmount() {
+            this.unsubscribe();
+        }
+
+        render() {
+            const props = this.props;
+            const state = store.getState();
+
+            return (
+                <Link
+                    active={state.visibilityFilter === props.filter}
+                    onClick={() =>
+                        store.dispatch({
+                            type: 'SET_VISIBILITY_FILTER',
+                            filter: props.filter
+                        })
+                    }
+                >
+                    {props.children}
+                </Link>
+            );
+        }
+    }
+
+    const Header = () => (
         <p>
             Show:
             {' | '}
             <FilterLink
-                onClick={onFilterClick}
                 filter='SHOW_ALL'
-                currentFilter={visibilityFilter}
-                children='All'>
+            >
+                All
             </FilterLink>
             {' | '}
             <FilterLink
-                onClick={onFilterClick}
                 filter='SHOW_ACTIVE'
-                currentFilter={visibilityFilter}
-                children='Active'>
+            >
+                Active
             </FilterLink>
             {' | '}
             <FilterLink
-                onClick={onFilterClick}
                 filter='SHOW_COMPLETED'
-                currentFilter={visibilityFilter}
-                children='Completed'>
+            >
+                Completed
             </FilterLink>
         </p>
     );
@@ -173,15 +199,7 @@ function TodoApp () {
         visibilityFilter
     }) => (
         <div>
-            <Header
-                visibilityFilter={visibilityFilter}
-                onFilterClick={filter =>
-                    store.dispatch({
-                        type: 'SET_VISIBILITY_FILTER',
-                        filter
-                    })
-                }
-            ></Header>
+            <Header />
             <AddTodo
                 onAddTodo={text =>
                     store.dispatch({
