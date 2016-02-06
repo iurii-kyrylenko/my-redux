@@ -53,8 +53,6 @@ function TodoApp () {
         visibilityFilter
     });
 
-    const store = createStore(todoApp);
-
     const getVisibleTodos = (todos, filter) => {
         switch(filter) {
             case 'SHOW_ALL':
@@ -89,6 +87,7 @@ function TodoApp () {
 
     class FilterLink extends Component {
         componentDidMount() {
+            const {store} = this.props;
             this.unsubscribe = store.subscribe(() =>
                 this.forceUpdate()
             );
@@ -99,6 +98,7 @@ function TodoApp () {
         }
 
         render() {
+            const {store} = this.props;
             const props = this.props;
             const state = store.getState();
 
@@ -118,23 +118,26 @@ function TodoApp () {
         }
     }
 
-    const Header = () => (
+    const Header = ({store}) => (
         <p>
             Show:
             {' | '}
             <FilterLink
+                store={store}
                 filter='SHOW_ALL'
             >
                 All
             </FilterLink>
             {' | '}
             <FilterLink
+                store={store}
                 filter='SHOW_ACTIVE'
             >
                 Active
             </FilterLink>
             {' | '}
             <FilterLink
+                store={store}
                 filter='SHOW_COMPLETED'
             >
                 Completed
@@ -144,7 +147,7 @@ function TodoApp () {
 
     let nextTodId = 0;
 
-    const AddTodo = () => {
+    const AddTodo = ({store}) => {
         let input;
         return (
             <div>
@@ -201,6 +204,7 @@ function TodoApp () {
 
     class VisibleTodoList extends Component {
         componentDidMount() {
+            const {store} = this.props;
             this.unsubscribe = store.subscribe(() =>
                 this.forceUpdate()
             );
@@ -211,6 +215,7 @@ function TodoApp () {
         }
 
         render() {
+            const {store} = this.props;
             const state = store.getState();
             return (
                 <TodoList
@@ -229,16 +234,16 @@ function TodoApp () {
         }
     }
 
-    const TodoApp = () => (
+    const TodoApp = ({store}) => (
         <div>
-            <Header />
-            <AddTodo />
-            <VisibleTodoList />
+            <Header store={store} />
+            <AddTodo store={store} />
+            <VisibleTodoList store={store} />
         </div>
     );
 
     ReactDOM.render(
-        <TodoApp />,
+        <TodoApp store={createStore(todoApp)} />,
         document.getElementById('root')
     );
 
