@@ -1,5 +1,9 @@
 function TodoApp () {
 
+    const { combineReducers } = Redux;
+    const { createStore } = Redux;
+    const { Component } = React;
+
     const todo = (state = {}, action) => {
         switch(action.type) {
             case 'ADD_TODO':
@@ -44,13 +48,11 @@ function TodoApp () {
         }
     };
 
-    const { combineReducers } = Redux;
     const todoApp = combineReducers({
         todos,
         visibilityFilter
     });
 
-    const { createStore } = Redux;
     const store = createStore(todoApp);
 
     const getVisibleTodos = (todos, filter) => {
@@ -85,7 +87,6 @@ function TodoApp () {
         );
     };
 
-    const { Component } = React;
     class FilterLink extends Component {
         componentDidMount() {
             this.unsubscribe = store.subscribe(() =>
@@ -141,9 +142,9 @@ function TodoApp () {
         </p>
     );
 
-    const AddTodo = ({
-        onAddTodo
-    }) => {
+    let nextTodId = 0;
+
+    const AddTodo = () => {
         let input;
         return (
             <div>
@@ -152,7 +153,13 @@ function TodoApp () {
                 <button
                     onClick= {() => {
                         const text = input.value.trim();
-                        if(text) onAddTodo(text);
+                        if(text) {
+                            store.dispatch({
+                                type: 'ADD_TODO',
+                                id: nextTodId++,
+                                text
+                            });
+                        }
                         input.value = '';
                     }}
                 >Add Todo
@@ -192,46 +199,47 @@ function TodoApp () {
         </ul>
     );
 
-    let nextTodId = 0;
+    class VisibleTodoList extends Component {
+        componentDidMount() {
+            this.unsubscribe = store.subscribe(() =>
+                this.forceUpdate()
+            );
+        }
 
-    const TodoApp = ({
-        todos,
-        visibilityFilter
-    }) => (
+        componentWillUnmount() {
+            this.unsubscribe();
+        }
+
+        render() {
+            const state = store.getState();
+            return (
+                <TodoList
+                    todos={
+                        getVisibleTodos(state.todos, state.visibilityFilter)
+                    }
+                    onTodoClick={id =>
+                        store.dispatch({
+                            type: 'TOGGLE_TODO',
+                            id
+                        })
+                    }
+                >
+                </TodoList>
+            );
+        }
+    }
+
+    const TodoApp = () => (
         <div>
             <Header />
-            <AddTodo
-                onAddTodo={text =>
-                    store.dispatch({
-                        type: 'ADD_TODO',
-                        id: nextTodId++,
-                        text
-                    })
-                }
-            ></AddTodo>
-            <TodoList
-                todos={getVisibleTodos(todos, visibilityFilter)}
-                onTodoClick={id =>
-                    store.dispatch({
-                        type: 'TOGGLE_TODO',
-                        id
-                    })
-                }
-            ></TodoList>
+            <AddTodo />
+            <VisibleTodoList />
         </div>
     );
 
-    const render = () => {
-        ReactDOM.render(
-            <TodoApp
-                {...store.getState()}
-            >
-            </TodoApp>,
-            document.getElementById('root')
-        );
-    };
-
-    store.subscribe(render);
-    render();
+    ReactDOM.render(
+        <TodoApp />,
+        document.getElementById('root')
+    );
 
 }

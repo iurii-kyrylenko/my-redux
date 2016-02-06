@@ -32,7 +32,7 @@ gulp.task('copy:assets', ['clean'], function() {
     .pipe(gulp.dest(paths.dist))
 }); 
  
-gulp.task('compile', ['clean'], () => {
+gulp.task('compile', ['clean'], function() {
     return gulp.src(paths.srcScripts)
         .pipe(sourcemaps.init())
         .pipe(babel({
