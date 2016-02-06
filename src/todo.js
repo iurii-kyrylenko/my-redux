@@ -3,6 +3,7 @@ function TodoApp () {
     const { combineReducers } = Redux;
     const { createStore } = Redux;
     const { Component } = React;
+    const { Provider } = ReactRedux;
 
     const todo = (state = {}, action) => {
         switch(action.type) {
@@ -243,21 +244,6 @@ function TodoApp () {
     }
 
     VisibleTodoList.contextTypes = {
-        store: React.PropTypes.object
-    };
-
-    class Provider extends Component {
-        render() {
-            return this.props.children;
-        }
-        getChildContext() {
-            return {
-                store: this.props.store
-            };
-        }
-    }
-
-    Provider.childContextTypes = {
         store: React.PropTypes.object
     };
 
