@@ -55,6 +55,29 @@ function TodoApp () {
         visibilityFilter
     });
 
+    let nextTodId = 0;
+    const addTodo = (text) => {
+        return {
+            type: 'ADD_TODO',
+            id: nextTodId++,
+            text
+        };
+    };
+
+    const toggleTodo = (id) => {
+        return {
+            type: 'TOGGLE_TODO',
+            id
+        };
+    };
+
+    const setVisibilityFilter = (filter) => {
+        return {
+            type: 'SET_VISIBILITY_FILTER',
+            filter
+        };
+    };
+
     const getVisibleTodos = (todos, filter) => {
         switch(filter) {
             case 'SHOW_ALL':
@@ -101,10 +124,9 @@ function TodoApp () {
     ) => {
         return {
             onClick: () => {
-                dispatch({
-                    type: 'SET_VISIBILITY_FILTER',
-                    filter: ownProps.filter
-                })
+                dispatch(
+                    setVisibilityFilter(ownProps.filter)
+                )
             }
         };
     };
@@ -137,8 +159,6 @@ function TodoApp () {
         </p>
     );
 
-    let nextTodId = 0;
-
     let AddTodo = ({dispatch}) => {
         let input;
         return (
@@ -148,14 +168,10 @@ function TodoApp () {
                 <button
                     onClick= {() => {
                         const text = input.value.trim();
-                        if(text) {
-                            dispatch({
-                                type: 'ADD_TODO',
-                                id: nextTodId++,
-                                text
-                            });
-                        }
                         input.value = '';
+                        if(!text) return;
+
+                        dispatch(addTodo(text));
                     }}
                 >Add Todo
                 </button>
@@ -211,10 +227,7 @@ function TodoApp () {
     ) => {
         return {
             onTodoClick: (id) => {
-                dispatch({
-                    type: 'TOGGLE_TODO',
-                    id
-                })
+                dispatch(toggleTodo(id))
             }
         };
     };
