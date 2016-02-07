@@ -150,7 +150,7 @@ function TodoApp () {
 
     let nextTodId = 0;
 
-    const AddTodo = (props, {store}) => {
+    let AddTodo = ({dispatch}) => {
         let input;
         return (
             <div>
@@ -160,7 +160,7 @@ function TodoApp () {
                     onClick= {() => {
                         const text = input.value.trim();
                         if(text) {
-                            store.dispatch({
+                            dispatch({
                                 type: 'ADD_TODO',
                                 id: nextTodId++,
                                 text
@@ -174,9 +174,7 @@ function TodoApp () {
         );
     };
 
-    AddTodo.contextTypes = {
-        store: React.PropTypes.object
-    };
+    AddTodo = connect()(AddTodo);
 
     const Todo = ({
         onClick,
@@ -209,7 +207,9 @@ function TodoApp () {
         </ul>
     );
 
-    const mapStateToProps = (state) => {
+    const mapStateToTodoListProps = (
+        state
+    ) => {
         return {
             todos: getVisibleTodos(
                 state.todos,
@@ -217,8 +217,9 @@ function TodoApp () {
             )
         };
     };
-
-    const mapDispatchToProps = (dispatch) => {
+    const mapDispatchToTodoListProps = (
+        dispatch
+    ) => {
         return {
             onTodoClick: (id) => {
                 dispatch({
@@ -228,10 +229,9 @@ function TodoApp () {
             }
         };
     };
-
     const VisibleTodoList = connect(
-        mapStateToProps,
-        mapDispatchToProps
+        mapStateToTodoListProps,
+        mapDispatchToTodoListProps
     )(TodoList);
 
     const TodoApp = () => (
